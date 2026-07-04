@@ -6,6 +6,7 @@ import { StrikeThrough } from "@/components/post-card/StrikeThrough";
 import { ReactionButton } from "@/components/post-card/ReactionButton";
 import { ShareButtons } from "@/components/post-card/ShareButtons";
 import { DeletePostButton } from "@/components/post-card/DeletePostButton";
+import { ReportButton } from "@/components/post-card/ReportButton";
 import { CommentsSection } from "@/components/comments/CommentsSection";
 import { CATEGORIES, ANONYMOUS_DISPLAY_NAME, SITE_URL } from "@/lib/constants";
 import { formatRelativeTime } from "@/lib/format";
@@ -111,6 +112,7 @@ export default async function PostDetailPage({ params }: PostDetailPageProps) {
             <MessageCircle className="h-4 w-4" />
             {post.comment_count}
           </span>
+          <ReportButton target="post" postId={post.id} />
         </span>
       </div>
 

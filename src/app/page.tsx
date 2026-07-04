@@ -2,6 +2,7 @@ import { FeedTabs } from "@/components/feed/FeedTabs";
 import { CategoryFilter } from "@/components/feed/CategoryFilter";
 import { LoadMore } from "@/components/feed/LoadMore";
 import { PostCard } from "@/components/post-card/PostCard";
+import { Hero } from "@/components/hero/Hero";
 import { getFeedPosts, type FeedTab } from "@/lib/posts";
 import { getUserReactedPostIds } from "@/lib/reactions";
 
@@ -24,9 +25,14 @@ export default async function Home({ searchParams }: HomePageProps) {
 
   const { posts, hasMore } = await getFeedPosts({ tab, category, page });
   const reactedIds = await getUserReactedPostIds(posts.map((p) => p.id));
+  const heroPost =
+    tab === "hot" && page === 1 && !category
+      ? (posts.find((p) => p.type === "reframe") ?? null)
+      : null;
 
   return (
     <div className="mx-auto max-w-2xl">
+      {heroPost && <Hero post={heroPost} />}
       <FeedTabs active={tab} category={category} />
       <CategoryFilter active={category} tab={tab} />
 
