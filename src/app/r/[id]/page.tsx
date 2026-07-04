@@ -1,8 +1,14 @@
 import { notFound } from "next/navigation";
+import { MessageCircle } from "lucide-react";
 import { OfficialBadge } from "@/components/post-card/OfficialBadge";
+import { StrikeThrough } from "@/components/post-card/StrikeThrough";
+import { ReactionButton } from "@/components/post-card/ReactionButton";
+import { CommentsSection } from "@/components/comments/CommentsSection";
 import { CATEGORIES, ANONYMOUS_DISPLAY_NAME } from "@/lib/constants";
 import { formatRelativeTime } from "@/lib/format";
 import { getPostById } from "@/lib/posts";
+import { getUserReactedPostIds } from "@/lib/reactions";
+import { getCommentsByPostId } from "@/lib/comments";
 
 function categoryLabel(value: string): string {
   return CATEGORIES.find((c) => c.value === value)?.label ?? value;
@@ -18,14 +24,19 @@ export default async function PostDetailPage({ params }: PostDetailPageProps) {
 
   if (!post) notFound();
 
+  const [reactedIds, comments] = await Promise.all([
+    getUserReactedPostIds([post.id]),
+    getCommentsByPostId(post.id),
+  ]);
+
   const authorName = post.profiles?.display_name ?? ANONYMOUS_DISPLAY_NAME;
 
   return (
     <article className="mx-auto max-w-2xl px-4 py-10">
       {post.type === "reframe" ? (
         <div className="flex flex-col gap-4">
-          <p className="font-mincho text-2xl text-(--color-ink-faded) line-through decoration-(--color-vermilion) decoration-2">
-            {post.before_text}
+          <p className="font-mincho text-2xl text-(--color-ink-faded)">
+            <StrikeThrough>{post.before_text}</StrikeThrough>
           </p>
           <p className="font-gothic text-3xl font-bold text-(--color-ink)">
             {post.after_text}
@@ -52,7 +63,20 @@ export default async function PostDetailPage({ params }: PostDetailPageProps) {
           {authorName}
         </span>
         <span>{formatRelativeTime(post.created_at)}</span>
+        <span className="ml-auto flex items-center gap-4">
+          <ReactionButton
+            postId={post.id}
+            initialCount={post.reaction_count}
+            initialReacted={reactedIds.has(post.id)}
+          />
+          <span className="inline-flex items-center gap-1 text-xs">
+            <MessageCircle className="h-4 w-4" />
+            {post.comment_count}
+          </span>
+        </span>
       </div>
+
+      <CommentsSection postId={post.id} initialComments={comments} />
     </article>
   );
 }

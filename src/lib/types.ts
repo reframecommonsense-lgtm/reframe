@@ -26,3 +26,11 @@ export interface PostRow {
 export interface Post extends PostRow {
   profiles: PostAuthor | null;
 }
+
+export interface Comment {
+  id: string;
+  body: string;
+  created_at: string;
+  author_display_name: string;
+  author_is_official: boolean;
+}

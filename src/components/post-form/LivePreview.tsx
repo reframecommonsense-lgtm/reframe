@@ -1,3 +1,4 @@
+import { StrikeThrough } from "@/components/post-card/StrikeThrough";
 import type { PostType } from "@/lib/types";
 
 interface LivePreviewProps {
@@ -24,8 +25,8 @@ export function LivePreview({
       {type === "reframe" ? (
         <div className="flex flex-col gap-2">
           {beforeText && (
-            <p className="font-mincho text-(length:--text-card-before) text-(--color-ink-faded) line-through decoration-(--color-vermilion) decoration-2">
-              {beforeText}
+            <p className="font-mincho text-(length:--text-card-before) text-(--color-ink-faded)">
+              <StrikeThrough>{beforeText}</StrikeThrough>
             </p>
           )}
           {afterText && (

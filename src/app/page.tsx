@@ -3,6 +3,7 @@ import { CategoryFilter } from "@/components/feed/CategoryFilter";
 import { LoadMore } from "@/components/feed/LoadMore";
 import { PostCard } from "@/components/post-card/PostCard";
 import { getFeedPosts, type FeedTab } from "@/lib/posts";
+import { getUserReactedPostIds } from "@/lib/reactions";
 
 export const revalidate = 60;
 
@@ -22,6 +23,7 @@ export default async function Home({ searchParams }: HomePageProps) {
   const page = Math.max(1, Number(params.page) || 1);
 
   const { posts, hasMore } = await getFeedPosts({ tab, category, page });
+  const reactedIds = await getUserReactedPostIds(posts.map((p) => p.id));
 
   return (
     <div className="mx-auto max-w-2xl">
@@ -35,7 +37,11 @@ export default async function Home({ searchParams }: HomePageProps) {
       ) : (
         <div>
           {posts.map((post) => (
-            <PostCard key={post.id} post={post} />
+            <PostCard
+              key={post.id}
+              post={post}
+              reacted={reactedIds.has(post.id)}
+            />
           ))}
         </div>
       )}
