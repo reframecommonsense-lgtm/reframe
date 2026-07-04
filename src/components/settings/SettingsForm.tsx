@@ -43,7 +43,7 @@ export function SettingsForm() {
     })();
   }, []);
 
-  async function handleLink(provider: "google" | "twitter") {
+  async function handleLink(provider: "google" | "x") {
     setError(null);
     const supabase = createClient();
     const { error: linkError } = await supabase.auth.linkIdentity({
@@ -97,7 +97,7 @@ export function SettingsForm() {
           </button>
           <button
             type="button"
-            onClick={() => handleLink("twitter")}
+            onClick={() => handleLink("x")}
             className="rounded-full border border-(--color-line) px-5 py-2 text-sm text-(--color-ink)"
           >
             Xで登録
