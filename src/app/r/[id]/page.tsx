@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MessageCircle } from "lucide-react";
 import { OfficialBadge } from "@/components/post-card/OfficialBadge";
@@ -122,7 +123,15 @@ export default async function PostDetailPage({ params }: PostDetailPageProps) {
           pageUrl={`${SITE_URL}/r/${post.id}`}
         />
         {currentUserId === post.author_id && (
-          <DeletePostButton postId={post.id} />
+          <div className="flex items-center gap-4">
+            <Link
+              href={`/r/${post.id}/edit`}
+              className="text-xs text-(--color-ink-faded) underline"
+            >
+              編集する
+            </Link>
+            <DeletePostButton postId={post.id} />
+          </div>
         )}
       </div>
 

@@ -6,20 +6,35 @@ import { TypeSelector } from "./TypeSelector";
 import { LivePreview } from "./LivePreview";
 import { CATEGORIES, LIMITS } from "@/lib/constants";
 import { ensureAnonymousSession } from "@/lib/supabase/client";
-import { createPost } from "@/lib/actions/posts";
+import { createPost, editPost } from "@/lib/actions/posts";
 import type { PostType } from "@/lib/types";
 
 type Step = "type" | "input" | "category";
 
-export function PostForm() {
+export interface EditingPost {
+  id: string;
+  type: PostType;
+  beforeText?: string;
+  afterText?: string;
+  title?: string;
+  body?: string;
+  category: string;
+}
+
+interface PostFormProps {
+  editingPost?: EditingPost;
+}
+
+export function PostForm({ editingPost }: PostFormProps) {
   const router = useRouter();
-  const [step, setStep] = useState<Step>("type");
-  const [type, setType] = useState<PostType | null>(null);
-  const [beforeText, setBeforeText] = useState("");
-  const [afterText, setAfterText] = useState("");
-  const [title, setTitle] = useState("");
-  const [body, setBody] = useState("");
-  const [category, setCategory] = useState("");
+  const isEditing = Boolean(editingPost);
+  const [step, setStep] = useState<Step>(editingPost ? "input" : "type");
+  const [type, setType] = useState<PostType | null>(editingPost?.type ?? null);
+  const [beforeText, setBeforeText] = useState(editingPost?.beforeText ?? "");
+  const [afterText, setAfterText] = useState(editingPost?.afterText ?? "");
+  const [title, setTitle] = useState(editingPost?.title ?? "");
+  const [body, setBody] = useState(editingPost?.body ?? "");
+  const [category, setCategory] = useState(editingPost?.category ?? "");
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
@@ -57,6 +72,16 @@ export function PostForm() {
         type === "reframe"
           ? { type: "reframe" as const, beforeText, afterText, body, category }
           : { type: "frame" as const, title, body, category };
+
+      if (isEditing && editingPost) {
+        const result = await editPost(editingPost.id, input);
+        if (!result.success) {
+          setError(result.error ?? "更新に失敗しました。");
+          return;
+        }
+        router.push(`/r/${editingPost.id}`);
+        return;
+      }
 
       const result = await createPost(input);
       if (!result.success) {
@@ -129,13 +154,17 @@ export function PostForm() {
           {error && <p className="text-sm text-(--color-vermilion)">{error}</p>}
 
           <div className="flex justify-between">
-            <button
-              type="button"
-              onClick={() => setStep("type")}
-              className="text-sm text-(--color-ink-faded)"
-            >
-              戻る
-            </button>
+            {isEditing ? (
+              <span />
+            ) : (
+              <button
+                type="button"
+                onClick={() => setStep("type")}
+                className="text-sm text-(--color-ink-faded)"
+              >
+                戻る
+              </button>
+            )}
             <button
               type="button"
               onClick={goToCategory}
@@ -185,7 +214,13 @@ export function PostForm() {
               onClick={submit}
               className="rounded-full bg-(--color-vermilion) px-6 py-2 text-sm text-(--color-paper) disabled:opacity-40"
             >
-              {isPending ? "投稿中…" : "投稿する"}
+              {isPending
+                ? isEditing
+                  ? "更新中…"
+                  : "投稿中…"
+                : isEditing
+                  ? "更新する"
+                  : "投稿する"}
             </button>
           </div>
         </div>

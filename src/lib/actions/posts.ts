@@ -69,6 +69,59 @@ export async function createPost(
   return { success: true, postId: inserted.id };
 }
 
+export interface EditPostResult {
+  success: boolean;
+  error?: string;
+}
+
+export async function editPost(
+  postId: string,
+  input: CreatePostInput,
+): Promise<EditPostResult> {
+  const parsed = createPostSchema.safeParse(input);
+  if (!parsed.success) {
+    return { success: false, error: "入力内容を確認してください。" };
+  }
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { success: false, error: "セッションが確立できませんでした。" };
+  }
+
+  const data = parsed.data;
+  const row =
+    data.type === "reframe"
+      ? {
+          before_text: data.beforeText,
+          after_text: data.afterText,
+          body: data.body || null,
+          category: data.category,
+        }
+      : {
+          title: data.title,
+          body: data.body,
+          category: data.category,
+        };
+
+  const { error } = await supabase
+    .from("posts")
+    .update(row as Record<string, unknown>)
+    .eq("id", postId)
+    .eq("author_id", user.id);
+
+  if (error) {
+    return { success: false, error: "更新に失敗しました。" };
+  }
+
+  revalidatePath(`/r/${postId}`);
+  revalidatePath("/");
+  return { success: true };
+}
+
 export interface DeletePostResult {
   success: boolean;
   error?: string;
