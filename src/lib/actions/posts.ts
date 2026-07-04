@@ -68,3 +68,33 @@ export async function createPost(
   revalidatePath("/");
   return { success: true, postId: inserted.id };
 }
+
+export interface DeletePostResult {
+  success: boolean;
+  error?: string;
+}
+
+export async function deletePost(postId: string): Promise<DeletePostResult> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { success: false, error: "セッションが確立できませんでした。" };
+  }
+
+  const { error } = await supabase
+    .from("posts")
+    .update({ status: "removed" })
+    .eq("id", postId)
+    .eq("author_id", user.id);
+
+  if (error) {
+    return { success: false, error: "削除に失敗しました。" };
+  }
+
+  revalidatePath(`/r/${postId}`);
+  revalidatePath("/");
+  return { success: true };
+}

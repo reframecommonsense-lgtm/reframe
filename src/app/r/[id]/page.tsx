@@ -5,6 +5,7 @@ import { OfficialBadge } from "@/components/post-card/OfficialBadge";
 import { StrikeThrough } from "@/components/post-card/StrikeThrough";
 import { ReactionButton } from "@/components/post-card/ReactionButton";
 import { ShareButtons } from "@/components/post-card/ShareButtons";
+import { DeletePostButton } from "@/components/post-card/DeletePostButton";
 import { CommentsSection } from "@/components/comments/CommentsSection";
 import { CATEGORIES, ANONYMOUS_DISPLAY_NAME, SITE_URL } from "@/lib/constants";
 import { formatRelativeTime } from "@/lib/format";
@@ -12,6 +13,7 @@ import { getPostById } from "@/lib/posts";
 import { getUserReactedPostIds } from "@/lib/reactions";
 import { getCommentsByPostId } from "@/lib/comments";
 import { buildShareIntentUrl } from "@/lib/share";
+import { getCurrentUserId } from "@/lib/auth";
 
 function categoryLabel(value: string): string {
   return CATEGORIES.find((c) => c.value === value)?.label ?? value;
@@ -59,9 +61,10 @@ export default async function PostDetailPage({ params }: PostDetailPageProps) {
 
   if (!post) notFound();
 
-  const [reactedIds, comments] = await Promise.all([
+  const [reactedIds, comments, currentUserId] = await Promise.all([
     getUserReactedPostIds([post.id]),
     getCommentsByPostId(post.id),
+    getCurrentUserId(),
   ]);
 
   const authorName = post.profiles?.display_name ?? ANONYMOUS_DISPLAY_NAME;
@@ -111,11 +114,14 @@ export default async function PostDetailPage({ params }: PostDetailPageProps) {
         </span>
       </div>
 
-      <div className="mt-6">
+      <div className="mt-6 flex items-center justify-between gap-3">
         <ShareButtons
           shareIntentUrl={buildShareIntentUrl(post, SITE_URL)}
           pageUrl={`${SITE_URL}/r/${post.id}`}
         />
+        {currentUserId === post.author_id && (
+          <DeletePostButton postId={post.id} />
+        )}
       </div>
 
       <CommentsSection postId={post.id} initialComments={comments} />

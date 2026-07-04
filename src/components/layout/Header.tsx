@@ -14,6 +14,9 @@ export function Header() {
           <Link href="/about" className="hover:text-(--color-ink)">
             about
           </Link>
+          <Link href="/settings" className="hover:text-(--color-ink)">
+            設定
+          </Link>
           <Link
             href="/post"
             className="rounded-full border border-(--color-vermilion) px-3 py-1.5 text-(--color-vermilion) hover:bg-(--color-vermilion) hover:text-(--color-paper)"

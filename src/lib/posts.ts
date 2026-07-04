@@ -64,6 +64,19 @@ export async function getPostById(id: string): Promise<Post | null> {
   return data as unknown as Post;
 }
 
+export async function getPostsByAuthorId(authorId: string): Promise<Post[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("posts")
+    .select(POST_SELECT)
+    .eq("author_id", authorId)
+    .eq("status", "published")
+    .order("created_at", { ascending: false });
+
+  if (error) throw error;
+  return (data ?? []) as unknown as Post[];
+}
+
 function paginate(posts: Post[]): { posts: Post[]; hasMore: boolean } {
   return { posts: posts.slice(0, PAGE_SIZE), hasMore: posts.length > PAGE_SIZE };
 }
