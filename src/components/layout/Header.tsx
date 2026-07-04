@@ -14,6 +14,9 @@ export function Header() {
           <Link href="/about" className="hover:text-(--color-ink)">
             about
           </Link>
+          <Link href="/mine" className="hover:text-(--color-ink)">
+            マイ投稿
+          </Link>
           <Link href="/settings" className="hover:text-(--color-ink)">
             設定
           </Link>

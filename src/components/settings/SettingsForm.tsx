@@ -54,18 +54,29 @@ export function SettingsForm({ initialProfile }: SettingsFormProps) {
   async function handleLink(provider: "google" | "x") {
     setError(null);
     const supabase = createClient();
+    const redirectTo = `${window.location.origin}/auth/callback?next=/settings`;
+
     const { error: linkError } = await supabase.auth.linkIdentity({
       provider,
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback?next=/settings`,
-      },
+      options: { redirectTo },
     });
 
-    if (linkError) {
-      setError(
-        "ログイン連携に失敗しました。時間をおいて再度お試しください。",
-      );
+    if (!linkError) return;
+
+    if (linkError.code === "identity_already_exists") {
+      // 別のブラウザ/端末で既に登録済みのアカウント。
+      // そちらへ普通にログインし直す(匿名セッションは破棄される)。
+      const { error: signInError } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: { redirectTo },
+      });
+      if (signInError) {
+        setError("ログインに失敗しました。時間をおいて再度お試しください。");
+      }
+      return;
     }
+
+    setError("ログイン連携に失敗しました。時間をおいて再度お試しください。");
   }
 
   function handleSave() {
@@ -112,6 +123,12 @@ export function SettingsForm({ initialProfile }: SettingsFormProps) {
           </button>
         </div>
         {error && <p className="text-sm text-(--color-vermilion)">{error}</p>}
+        <a
+          href="/mine"
+          className="text-sm text-(--color-vermilion) underline"
+        >
+          マイ投稿を見る
+        </a>
       </section>
     );
   }
@@ -154,14 +171,19 @@ export function SettingsForm({ initialProfile }: SettingsFormProps) {
         {isPending ? "保存中…" : "保存する"}
       </button>
 
-      {profile.handle && (
-        <a
-          href={`/u/${profile.handle}`}
-          className="text-sm text-(--color-vermilion) underline"
-        >
-          自分のページを見る
+      <div className="flex gap-4">
+        {profile.handle && (
+          <a
+            href={`/u/${profile.handle}`}
+            className="text-sm text-(--color-vermilion) underline"
+          >
+            自分のページを見る
+          </a>
+        )}
+        <a href="/mine" className="text-sm text-(--color-vermilion) underline">
+          マイ投稿を見る
         </a>
-      )}
+      </div>
     </section>
   );
 }

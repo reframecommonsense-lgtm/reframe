@@ -77,6 +77,24 @@ export async function getPostsByAuthorId(authorId: string): Promise<Post[]> {
   return (data ?? []) as unknown as Post[];
 }
 
+export async function getPostsByCurrentUser(): Promise<Post[]> {
+  const supabase = await createClient();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  if (!session) return [];
+
+  const { data, error } = await supabase
+    .from("posts")
+    .select(POST_SELECT)
+    .eq("author_id", session.user.id)
+    .neq("status", "removed")
+    .order("created_at", { ascending: false });
+
+  if (error) throw error;
+  return (data ?? []) as unknown as Post[];
+}
+
 function paginate(posts: Post[]): { posts: Post[]; hasMore: boolean } {
   return { posts: posts.slice(0, PAGE_SIZE), hasMore: posts.length > PAGE_SIZE };
 }
