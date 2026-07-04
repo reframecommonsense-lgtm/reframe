@@ -1,0 +1,19 @@
+:root {
+  /* 紙と墨と朱。色数はこの3系統で完結させる */
+  --color-paper: oklch(96.5% 0.008 90);
+  --color-ink: oklch(22% 0.01 270);
+  --color-ink-faded: oklch(55% 0.01 270);
+  --color-vermilion: oklch(58% 0.21 30);
+  --color-line: oklch(85% 0.01 90);
+
+  --font-mincho: var(--font-shippori), serif;
+  --font-gothic: var(--font-zen-kaku), sans-serif;
+
+  --text-base: clamp(1rem, 0.95rem + 0.3vw, 1.0625rem);
+  --text-card-before: clamp(1rem, 0.9rem + 0.5vw, 1.25rem);
+  --text-card-after: clamp(1.25rem, 1.1rem + 0.9vw, 1.75rem);
+
+  --space-section: clamp(3rem, 2rem + 4vw, 6rem);
+  --duration-strike: 600ms;
+  --ease-brush: cubic-bezier(0.22, 1, 0.36, 1);
+}
