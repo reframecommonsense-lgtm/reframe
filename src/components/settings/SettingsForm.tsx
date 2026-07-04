@@ -11,15 +11,23 @@ interface ProfileState {
   handle: string | null;
 }
 
-export function SettingsForm() {
-  const [profile, setProfile] = useState<ProfileState | null>(null);
-  const [displayName, setDisplayName] = useState("");
-  const [handle, setHandle] = useState("");
+interface SettingsFormProps {
+  initialProfile: ProfileState | null;
+}
+
+export function SettingsForm({ initialProfile }: SettingsFormProps) {
+  const [profile, setProfile] = useState<ProfileState | null>(initialProfile);
+  const [displayName, setDisplayName] = useState(
+    initialProfile?.displayName ?? "",
+  );
+  const [handle, setHandle] = useState(initialProfile?.handle ?? "");
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
+    if (initialProfile) return;
+
     (async () => {
       const session = await ensureAnonymousSession();
       if (!session) return;
@@ -41,7 +49,7 @@ export function SettingsForm() {
         setHandle(data.handle ?? "");
       }
     })();
-  }, []);
+  }, [initialProfile]);
 
   async function handleLink(provider: "google" | "x") {
     setError(null);

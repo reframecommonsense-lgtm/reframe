@@ -17,9 +17,9 @@ const zenKakuGothic = Zen_Kaku_Gothic_New({
 });
 
 export const metadata: Metadata = {
-  title: "Reframe — 呪いに朱を入れる",
+  title: "Reframe — 見方はひとつじゃない",
   description:
-    "世間の「〜すべき」に朱を入れ、物事の枠組みをひっくり返すリフレーミングを投稿・発見・シェアするサイト。",
+    "世間の「〜すべき」に、もうひとつの見方を映し出す。物事の枠組みを見つめ直すリフレーミングを投稿・発見・シェアするサイト。",
 };
 
 export default function RootLayout({

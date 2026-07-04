@@ -11,6 +11,15 @@ export async function updateSession(request: NextRequest) {
     return response;
   }
 
+  // セッションcookieが無い(未認証の閲覧者)場合はネットワーク往復を避ける。
+  // 投稿・リアクション時はensureAnonymousSession()がクライアント側で確立する。
+  const hasAuthCookie = request.cookies
+    .getAll()
+    .some((cookie) => cookie.name.startsWith("sb-") && cookie.name.includes("auth-token"));
+  if (!hasAuthCookie) {
+    return response;
+  }
+
   return updateSessionWithSupabase(request, response);
 }
 

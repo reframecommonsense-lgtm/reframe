@@ -7,14 +7,14 @@ export async function getUserReactedPostIds(
 
   const supabase = await createClient();
   const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return new Set();
+    data: { session },
+  } = await supabase.auth.getSession();
+  if (!session) return new Set();
 
   const { data } = await supabase
     .from("reactions")
     .select("post_id")
-    .eq("user_id", user.id)
+    .eq("user_id", session.user.id)
     .in("post_id", postIds);
 
   return new Set((data ?? []).map((row) => row.post_id as string));
