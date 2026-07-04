@@ -19,6 +19,9 @@ export const LIMITS = {
 
 export const ANONYMOUS_DISPLAY_NAME = "名も無き視点";
 
+export const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+
 export const RATE_LIMIT_MESSAGES: Record<string, string> = {
   RATE_LIMIT_DAILY: "本日の上限に達しました。日をまたいでからお試しください。",
   RATE_LIMIT_INTERVAL: "少し間隔を空けてからお試しください。",

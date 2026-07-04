@@ -1,21 +1,56 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { MessageCircle } from "lucide-react";
 import { OfficialBadge } from "@/components/post-card/OfficialBadge";
 import { StrikeThrough } from "@/components/post-card/StrikeThrough";
 import { ReactionButton } from "@/components/post-card/ReactionButton";
+import { ShareButtons } from "@/components/post-card/ShareButtons";
 import { CommentsSection } from "@/components/comments/CommentsSection";
-import { CATEGORIES, ANONYMOUS_DISPLAY_NAME } from "@/lib/constants";
+import { CATEGORIES, ANONYMOUS_DISPLAY_NAME, SITE_URL } from "@/lib/constants";
 import { formatRelativeTime } from "@/lib/format";
 import { getPostById } from "@/lib/posts";
 import { getUserReactedPostIds } from "@/lib/reactions";
 import { getCommentsByPostId } from "@/lib/comments";
+import { buildShareIntentUrl } from "@/lib/share";
 
 function categoryLabel(value: string): string {
   return CATEGORIES.find((c) => c.value === value)?.label ?? value;
 }
 
+function postSummary(post: Awaited<ReturnType<typeof getPostById>>): string {
+  if (!post) return "Reframe";
+  return post.type === "reframe"
+    ? `${post.before_text} → ${post.after_text}`
+    : (post.title ?? "Reframe");
+}
+
 interface PostDetailPageProps {
   params: Promise<{ id: string }>;
+}
+
+export async function generateMetadata({
+  params,
+}: PostDetailPageProps): Promise<Metadata> {
+  const { id } = await params;
+  const post = await getPostById(id);
+  const title = postSummary(post);
+  const pageUrl = `${SITE_URL}/r/${id}`;
+
+  return {
+    title: `${title} | Reframe`,
+    description: post?.body ?? title,
+    openGraph: {
+      title,
+      description: post?.body ?? title,
+      url: pageUrl,
+      type: "article",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description: post?.body ?? title,
+    },
+  };
 }
 
 export default async function PostDetailPage({ params }: PostDetailPageProps) {
@@ -74,6 +109,13 @@ export default async function PostDetailPage({ params }: PostDetailPageProps) {
             {post.comment_count}
           </span>
         </span>
+      </div>
+
+      <div className="mt-6">
+        <ShareButtons
+          shareIntentUrl={buildShareIntentUrl(post, SITE_URL)}
+          pageUrl={`${SITE_URL}/r/${post.id}`}
+        />
       </div>
 
       <CommentsSection postId={post.id} initialComments={comments} />
