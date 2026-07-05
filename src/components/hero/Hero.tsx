@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { StrikeThrough } from "@/components/post-card/StrikeThrough";
 import type { Post } from "@/lib/types";
 
 const STORAGE_KEY = "reframe_seen_hero";
@@ -31,7 +30,7 @@ export function Hero({ post }: HeroProps) {
         REFRAME — 世界の見え方が変わる
       </p>
       <p className="font-mincho text-2xl text-(--color-ink-faded) sm:text-3xl">
-        <StrikeThrough>{post.before_text}</StrikeThrough>
+        {post.before_text}
       </p>
       <p className="mt-6 font-gothic text-3xl font-bold text-(--color-ink) sm:text-4xl">
         {post.after_text}

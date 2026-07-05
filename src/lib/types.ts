@@ -15,6 +15,8 @@ export interface PostRow {
   after_text: string | null;
   title: string | null;
   body: string | null;
+  source_title: string | null;
+  source_url: string | null;
   category: string;
   status: PostStatus;
   reaction_count: number;

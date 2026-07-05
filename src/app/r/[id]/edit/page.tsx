@@ -26,6 +26,8 @@ export default async function EditPostPage({ params }: EditPostPageProps) {
         title: post.title ?? undefined,
         body: post.body ?? undefined,
         category: post.category,
+        sourceTitle: post.source_title ?? undefined,
+        sourceUrl: post.source_url ?? undefined,
       }}
     />
   );

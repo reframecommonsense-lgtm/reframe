@@ -18,6 +18,7 @@ export const LIMITS = {
   handleMin: 3,
   handleMax: 20,
   displayName: 30,
+  sourceTitle: 100,
 } as const;
 
 export const ANONYMOUS_DISPLAY_NAME = "名も無き視点";

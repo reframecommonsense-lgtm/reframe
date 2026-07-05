@@ -4,6 +4,21 @@ import { CATEGORIES, LIMITS } from "./constants";
 const categoryValues = CATEGORIES.map((c) => c.value) as [string, ...string[]];
 const categorySchema = z.enum(categoryValues);
 
+const sourceFields = {
+  sourceTitle: z
+    .string()
+    .trim()
+    .max(LIMITS.sourceTitle)
+    .optional()
+    .or(z.literal("")),
+  sourceUrl: z
+    .string()
+    .trim()
+    .url("正しいURLの形式で入力してください")
+    .optional()
+    .or(z.literal("")),
+};
+
 export const createPostSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal("reframe"),
@@ -11,12 +26,14 @@ export const createPostSchema = z.discriminatedUnion("type", [
     afterText: z.string().trim().min(1).max(LIMITS.afterText),
     body: z.string().trim().max(LIMITS.body).optional(),
     category: categorySchema,
+    ...sourceFields,
   }),
   z.object({
     type: z.literal("frame"),
     title: z.string().trim().min(1).max(LIMITS.title),
     body: z.string().trim().min(1).max(LIMITS.body),
     category: categorySchema,
+    ...sourceFields,
   }),
 ]);
 

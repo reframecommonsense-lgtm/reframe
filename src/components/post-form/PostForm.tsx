@@ -19,6 +19,8 @@ export interface EditingPost {
   title?: string;
   body?: string;
   category: string;
+  sourceTitle?: string;
+  sourceUrl?: string;
 }
 
 interface PostFormProps {
@@ -34,6 +36,10 @@ export function PostForm({ editingPost }: PostFormProps) {
   const [afterText, setAfterText] = useState(editingPost?.afterText ?? "");
   const [title, setTitle] = useState(editingPost?.title ?? "");
   const [body, setBody] = useState(editingPost?.body ?? "");
+  const [sourceTitle, setSourceTitle] = useState(
+    editingPost?.sourceTitle ?? "",
+  );
+  const [sourceUrl, setSourceUrl] = useState(editingPost?.sourceUrl ?? "");
   const [category, setCategory] = useState(editingPost?.category ?? "");
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -46,7 +52,7 @@ export function PostForm({ editingPost }: PostFormProps) {
   function goToCategory() {
     setError(null);
     if (type === "reframe" && (!beforeText.trim() || !afterText.trim())) {
-      setError("BeforeとAfterの両方を入力してください。");
+      setError("一般的な見方とリフレームした見方の両方を入力してください。");
       return;
     }
     if (type === "frame" && (!title.trim() || !body.trim())) {
@@ -70,8 +76,23 @@ export function PostForm({ editingPost }: PostFormProps) {
 
       const input =
         type === "reframe"
-          ? { type: "reframe" as const, beforeText, afterText, body, category }
-          : { type: "frame" as const, title, body, category };
+          ? {
+              type: "reframe" as const,
+              beforeText,
+              afterText,
+              body,
+              category,
+              sourceTitle,
+              sourceUrl,
+            }
+          : {
+              type: "frame" as const,
+              title,
+              body,
+              category,
+              sourceTitle,
+              sourceUrl,
+            };
 
       if (isEditing && editingPost) {
         const result = await editPost(editingPost.id, input);
@@ -101,18 +122,18 @@ export function PostForm({ editingPost }: PostFormProps) {
           {type === "reframe" ? (
             <>
               <Field
-                label={`Before（〜${LIMITS.beforeText}字）`}
+                label={`一般的な見方（〜${LIMITS.beforeText}字）`}
                 value={beforeText}
                 max={LIMITS.beforeText}
                 onChange={setBeforeText}
-                placeholder="世間で言われている「〜すべき」"
+                placeholder="世間でよく言われること・当たり前とされていること"
               />
               <Field
-                label={`After（〜${LIMITS.afterText}字）`}
+                label={`リフレームした見方（〜${LIMITS.afterText}字）`}
                 value={afterText}
                 max={LIMITS.afterText}
                 onChange={setAfterText}
-                placeholder="実はこう見える"
+                placeholder="自分はこう見ている・こう考えられる"
               />
               <Field
                 label={`解説（任意・〜${LIMITS.body}字）`}
@@ -142,6 +163,30 @@ export function PostForm({ editingPost }: PostFormProps) {
               />
             </>
           )}
+
+          <div className="flex flex-col gap-4 rounded-lg border border-(--color-line) p-4">
+            <p className="text-xs text-(--color-ink-faded)">
+              引用元（任意・他の記事などを参考にした場合）
+            </p>
+            <Field
+              label={`引用元タイトル（〜${LIMITS.sourceTitle}字）`}
+              value={sourceTitle}
+              max={LIMITS.sourceTitle}
+              onChange={setSourceTitle}
+              placeholder="引用した記事のタイトル"
+            />
+            <label className="flex flex-col gap-1.5">
+              <span className="text-sm text-(--color-ink-faded)">
+                引用元URL
+              </span>
+              <input
+                value={sourceUrl}
+                onChange={(e) => setSourceUrl(e.target.value)}
+                placeholder="https://..."
+                className="rounded-lg border border-(--color-line) bg-transparent px-3 py-2 text-(length:--text-base) outline-none focus:border-(--color-vermilion)"
+              />
+            </label>
+          </div>
 
           <LivePreview
             type={type}

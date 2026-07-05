@@ -14,6 +14,4 @@
   --text-card-after: clamp(1.25rem, 1.1rem + 0.9vw, 1.75rem);
 
   --space-section: clamp(3rem, 2rem + 4vw, 6rem);
-  --duration-strike: 600ms;
-  --ease-brush: cubic-bezier(0.22, 1, 0.36, 1);
 }

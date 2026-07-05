@@ -56,9 +56,6 @@ export default async function Image({
                 fontFamily: "Shippori Mincho",
                 fontSize: 40,
                 color: COLOR_INK_FADED,
-                textDecoration: "line-through",
-                textDecorationColor: COLOR_VERMILION,
-                textDecorationThickness: 4,
               }}
             >
               {beforeText}

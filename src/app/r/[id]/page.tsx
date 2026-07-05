@@ -3,7 +3,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MessageCircle } from "lucide-react";
 import { OfficialBadge } from "@/components/post-card/OfficialBadge";
-import { StrikeThrough } from "@/components/post-card/StrikeThrough";
 import { ReactionButton } from "@/components/post-card/ReactionButton";
 import { ShareButtons } from "@/components/post-card/ShareButtons";
 import { DeletePostButton } from "@/components/post-card/DeletePostButton";
@@ -76,7 +75,7 @@ export default async function PostDetailPage({ params }: PostDetailPageProps) {
       {post.type === "reframe" ? (
         <div className="flex flex-col gap-4">
           <p className="font-mincho text-2xl text-(--color-ink-faded)">
-            <StrikeThrough>{post.before_text}</StrikeThrough>
+            {post.before_text}
           </p>
           <p className="font-gothic text-3xl font-bold text-(--color-ink)">
             {post.after_text}
@@ -91,6 +90,20 @@ export default async function PostDetailPage({ params }: PostDetailPageProps) {
       {post.body && (
         <p className="mt-6 whitespace-pre-line text-(length:--text-base) text-(--color-ink)">
           {post.body}
+        </p>
+      )}
+
+      {post.source_url && (
+        <p className="mt-4 text-xs text-(--color-ink-faded)">
+          出典:{" "}
+          <a
+            href={post.source_url}
+            target="_blank"
+            rel="noopener noreferrer nofollow"
+            className="underline hover:text-(--color-vermilion)"
+          >
+            {post.source_title || post.source_url}
+          </a>
         </p>
       )}
 

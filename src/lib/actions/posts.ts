@@ -32,6 +32,10 @@ export async function createPost(
   }
 
   const data = parsed.data;
+  const sourceFields = {
+    source_title: data.sourceTitle || null,
+    source_url: data.sourceUrl || null,
+  };
   const row =
     data.type === "reframe"
       ? {
@@ -41,6 +45,7 @@ export async function createPost(
           after_text: data.afterText,
           body: data.body || null,
           category: data.category,
+          ...sourceFields,
         }
       : {
           author_id: user.id,
@@ -48,6 +53,7 @@ export async function createPost(
           title: data.title,
           body: data.body,
           category: data.category,
+          ...sourceFields,
         };
 
   const { data: inserted, error } = await supabase
@@ -93,6 +99,10 @@ export async function editPost(
   }
 
   const data = parsed.data;
+  const sourceFields = {
+    source_title: data.sourceTitle || null,
+    source_url: data.sourceUrl || null,
+  };
   const row =
     data.type === "reframe"
       ? {
@@ -100,11 +110,13 @@ export async function editPost(
           after_text: data.afterText,
           body: data.body || null,
           category: data.category,
+          ...sourceFields,
         }
       : {
           title: data.title,
           body: data.body,
           category: data.category,
+          ...sourceFields,
         };
 
   const { error } = await supabase

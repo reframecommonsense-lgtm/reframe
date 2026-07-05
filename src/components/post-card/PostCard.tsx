@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { MessageCircle } from "lucide-react";
 import { OfficialBadge } from "./OfficialBadge";
-import { StrikeThrough } from "./StrikeThrough";
 import { ReactionButton } from "./ReactionButton";
 import { CATEGORIES, ANONYMOUS_DISPLAY_NAME } from "@/lib/constants";
 import { formatRelativeTime } from "@/lib/format";
@@ -25,7 +24,7 @@ export function PostCard({ post, reacted }: PostCardProps) {
         {post.type === "reframe" ? (
           <div className="flex flex-col gap-2">
             <p className="font-mincho text-(length:--text-card-before) text-(--color-ink-faded)">
-              <StrikeThrough>{post.before_text}</StrikeThrough>
+              {post.before_text}
             </p>
             <p className="font-gothic text-(length:--text-card-after) font-bold text-(--color-ink)">
               {post.after_text}

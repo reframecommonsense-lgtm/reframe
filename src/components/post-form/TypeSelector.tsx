@@ -15,10 +15,10 @@ export function TypeSelector({ onSelect }: TypeSelectorProps) {
         className="rounded-lg border border-(--color-line) px-6 py-8 text-left transition-colors hover:border-(--color-vermilion)"
       >
         <p className="font-gothic text-lg font-bold text-(--color-ink)">
-          常識をひっくり返す
+          別の視点を示す
         </p>
         <p className="mt-1 text-sm text-(--color-ink-faded)">
-          Before → After の落差で見せる
+          一般的な見方と、リフレームした見方を並べる
         </p>
       </button>
       <button
